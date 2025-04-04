@@ -6,6 +6,9 @@ economy & stock viewer<br>
 
 API's used [AlphaVantage](https://www.alphavantage.co), [IEXCloud](https://iexcloud.io), [FRED](https://fred.stlouisfed.org) & [SlickCharts](https://www.slickcharts.com/sp500)
 
+## Docker 
+The Dockerized version of the application is available here: https://hub.docker.com/r/wumboinc/econicles
+
 ## local setup
 
 ```bash

@@ -197,22 +197,8 @@
 
                     <compilerArgs>
                         <arg>--enable-preview</arg>
-                        <arg>-XDcompilePolicy=simple</arg>
-                        <arg>-Xplugin:ErrorProne</arg>
                     </compilerArgs>
 
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>com.google.errorprone</groupId>
-                            <artifactId>error_prone_core</artifactId>
-                            <version>2.14.0</version>
-                        </path>
-                        <!-- Other annotation processors go here.
-
-                        If 'annotationProcessorPaths' is set, processors will no longer be
-                        discovered on the regular -classpath; see also 'Using Error Prone
-                        together with other annotation processors' below. -->
-                    </annotationProcessorPaths>
 
                 </configuration>
             </plugin>
@@ -226,40 +212,6 @@
                         -Denv=dev
                     </argLine>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.12.1</version>
-
-                <configuration>
-                    <workingDirectory>src/main/resources</workingDirectory>
-                    <installDirectory>${project.build.directory}/install</installDirectory>
-                </configuration>
-
-                <executions>
-                    <execution>
-                        <id>install-node-and-npm</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                        <configuration>
-                            <nodeVersion>v${node.version}</nodeVersion>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>npx-tailwind</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>npx</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>tailwindcss@latest -o views/assets/tailwind.css</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
