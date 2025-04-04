@@ -22,4 +22,4 @@ COPY src/main/resources/ /app/
 EXPOSE 80
 
 # Use the entrypoint to run the application
-ENTRYPOINT ["java -jar /app/econicles.jar"]
+ENTRYPOINT ENTRYPOINT ["java", "-jar", "/app/econicles.jar"]
