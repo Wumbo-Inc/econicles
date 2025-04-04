@@ -26,8 +26,10 @@ public class IEXCloud {
     private final String baseUrl;
     private final String tokenSecret;
 
-    private final HttpClient   httpClient = HttpClient.newHttpClient();
-    private final ObjectMapper mapper     = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).registerModule(new EmptyStringAsNullModule());
+    private final HttpClient httpClient = HttpClient.newHttpClient();
+    private final ObjectMapper mapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .registerModule(new EmptyStringAsNullModule());
 
     private final Cache<String, Object> cache = Caffeine.newBuilder()
             .expireAfterWrite(7, TimeUnit.DAYS)
@@ -48,59 +50,50 @@ public class IEXCloud {
     }
 
     public List<Ticker> tickers(String region /* ISO 3166-1 */) {
-
-        var uri = URI.create(baseUrl + "ref-data/region/" + region + "/symbols?token=" + tokenSecret);
+        var uri = URI.create(String.format("%sref-data/region/%s/symbols?token=%s", baseUrl, region, tokenSecret));
         var response = request(uri);
         var iexTickerResponses = Arrays.asList(jsonParse(response, Ticker[].class));
         return iexTickerResponses;
-
     }
 
     public String logo(String symbol) {
-
         var cached = (String) cache.getIfPresent("logo-" + symbol);
         if (cached != null) return cached;
 
-        var uri = URI.create(baseUrl + "/stock/" + symbol + "/logo?token=" + tokenSecret);
+        var uri = URI.create(String.format("%sstock/%s/logo?token=%s", baseUrl, symbol, tokenSecret));
         var response = request(uri);
 
         record IEXLogoResponse(String url) {}
-
         var iexLogoResponse = jsonParse(response, IEXLogoResponse.class);
         cache.put("logo-" + symbol, iexLogoResponse.url());
-
         return iexLogoResponse.url();
-
     }
 
     public CompanyProfile companyProfile(String symbol) {
-
         var cached = (CompanyProfile) cache.getIfPresent("profile-" + symbol);
         if (cached != null) return cached;
 
-        var uri = URI.create(baseUrl + "/stock/" + symbol + "/company?token=" + tokenSecret);
+        var uri = URI.create(String.format("%sstock/%s/company?token=%s", baseUrl, symbol, tokenSecret));
         var response = request(uri);
 
         var iexCompanyProfileResponse = jsonParse(response, CompanyProfile.class);
         cache.put("profile-" + symbol, iexCompanyProfileResponse);
         return iexCompanyProfileResponse;
-
     }
 
     public CompanyProfile fxRates(String baseCurrency) {
-
-        var uri = URI.create(baseUrl + "/fx/latest" + baseCurrency + "?token=" + tokenSecret);
+        // Updated URL construction.
+        // Note: Verify whether this endpoint should include a '/' between "latest" and the currency.
+        var uri = URI.create(String.format("%sfx/latest/%s?token=%s", baseUrl, baseCurrency, tokenSecret));
         var response = request(uri);
 
         var iexCompanyProfileResponse = jsonParse(response, CompanyProfile.class);
         throw new NotImplementedException();
-
     }
 
     public String stockPrice(String symbol) {
-        var uri = URI.create(baseUrl + "/stock/" + symbol + "/price?token=" + tokenSecret);
+        var uri = URI.create(String.format("%sstock/%s/price?token=%s", baseUrl, symbol, tokenSecret));
         var response = request(uri);
-
         return response.body(); // e.g "143.28"
     }
 
@@ -193,5 +186,4 @@ public class IEXCloud {
             super(message);
         }
     }
-
 }
